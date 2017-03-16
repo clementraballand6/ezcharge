@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> Mes informations</h3>
+
+            <!-- BASIC FORM ELELEMNTS -->
+            <div class="row mt">
+                <div class="col-lg-12">
+                    <div class="form-panel">
+                        <h4 class="mb"><i class="fa fa-angle-right"></i> Informations personnelles</h4>
+                        <form class="form-horizontal style-form" method="get" action="{{path_for('user_save')}}">
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Nom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="lastname"
+                                           value="{{user['lastname']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Prenom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="firstname"
+                                           value="{{user['firstname']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Ville</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="city"
+                                           value="{{user['city']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Code postal</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="postal_code"
+                                           value="{{user['postal_code']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Telephone</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="phone"
+                                           value="{{user['phone']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Mail</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="mail"
+                                           value="{{user['mail']}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <input type="hidden" name="id" value="{{user['id']}}">
+                            <button type="submit" class="btn btn-info"><i class="fa fa-file-text-o"></i> <a href="{{path_for('user_contracts', { 'id': user['id'] })}}">Voir les contrats du client</a></button>
+                            <br>
+                            <br>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregistrer</button>
+                            <br>
+                            <br>
+                            {% if user_updated %}
+                            <div class="alert alert-success alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <strong> Informations client mises à jours.</strong>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div><!-- col-lg-12-->
+            </div><!-- /row -->
+        </section>
+
+    </section>
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+</body>
+</html>

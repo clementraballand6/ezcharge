@@ -1,0 +1,29 @@
+/****************************************
+*                                       *
+*                INSTALL                *
+*                                       *
+*****************************************
+
+1. Configurer le fichier config.php avec les informations relatives à l'utilisateur et au nom de la base de données
+
+2. Importer 'EzCharge.sql' dans la base specifiée dans le fichier de configurations
+
+3. Copier le dossier du projet dans le repertoire apache
+   ATTENTION: NE PAS RENOMMER LE DOSSIER
+
+4. Lancer la commande "composer install" dans le dossier du projet
+
+4. Se rendre sur la page de login <domaine>'/EzCharge/public/index.php/login'
+   ATTENTION: CONSULTER LE SITE SOUS CHROME (input type date)
+
+5. Se connecter avec les différents logins disponibles ci-dessous:
+
+                         LOGIN/PASSWORD
+   UTILISATEURS :
+                         blondel/1234
+                         theodore83/1234
+
+   ADMINISTRATEURS :
+                         kmorin/1234
+                         xmartel/1234
+                         jules.rodriguez/1234

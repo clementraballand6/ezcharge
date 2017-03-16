@@ -1,0 +1,64 @@
+<!--header start-->
+<header class="header black-bg">
+    <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+    </div>
+    <!--logo start-->
+    <a href="index.html" class="logo"><b>EzCharge</b></a>
+    <!--logo end-->
+    <div class="nav notify-row" id="top_menu">
+        <!--  notification start -->
+        <ul class="nav top-menu">
+
+        </ul>
+        <!--  notification end -->
+    </div>
+    <div class="top-menu">
+        <ul class="nav pull-right top-menu">
+            <li><a class="logout" href="{{ path_for('logout') }}">Deconnexion</a></li>
+        </ul>
+    </div>
+</header>
+<!--header end-->
+
+<!-- **********************************************************************************************************************************************************
+MAIN SIDEBAR MENU
+*********************************************************************************************************************************************************** -->
+<!--sidebar start-->
+<aside>
+    <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+
+            <p class="centered"><a><img src="/EzCharge/template/assets/img/ezcharge.png"
+                                                            class="img-circle" width="60"></a></p>
+            <h5 class="centered">{{ infos['firstname'] ~ ' ' ~ infos['lastname'] }}</h5>
+            <h5 class="centered" style="color: red">(ADMIN)</h5>
+
+            <li class="mt">
+                <a {{ (route == 'users') ? ' class="active"' }} href="{{ path_for('users') }}">
+                    <i class="fa fa-user-o"></i>
+
+                    <span>Tous les clients</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a {{ (route == 'contracts') ? ' class="active"' }} href="{{ path_for('contracts') }}">
+                    <i class="fa fa-file-text-o"></i>
+                    <span>Tous les contrats</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a {{ (route == 'new_user') ? ' class="active"' }} href="{{ path_for('new_user') }}">
+                    <i class="fa fa-user-plus"></i>
+                    <span>Ajouter un utilisateur</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->

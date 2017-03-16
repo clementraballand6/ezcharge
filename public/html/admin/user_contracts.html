@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates//menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> Liste des contrats&nbsp <button onclick="window.location.reload()" type="button" class="btn btn-info"><i class="fa fa-refresh"></i> Rafraichir</button></h3>
+
+            {% include 'admin/templates/user_info.html' %}
+
+            {% if hasSubscription %}
+            <div class="row mt">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <table class="table table-striped table-advance table-hover" id="subscription">
+                            <h4><i class="fa fa-angle-right"></i> Abonnements &nbsp<button onclick="toggleSubscription(this)" type="button" class="btn btn-default"><i class="fa fa-eye-slash"></i></button></h4>
+                            <hr>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th><i class="fa fa-calendar"></i> Date de création</th>
+                                <th><i class="fa fa-check-circle-o"></i> Date de souscription</th>
+                                <th><i class="fa fa-lock"></i> Date de fin d'abonnement</th>
+                                <th><i class="fa fa-id-card-o"></i> Plaque d'immatriculation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for contract in contracts if contract.type_id == 2 %}
+                            <tr>
+                                <td>
+                                    <button class="btn btn-danger btn-s"
+                                            title="Supprimer le contrat"
+                                            data-toggle="modal"
+                                            data-target="#confirmContractDelete"
+                                            onclick="document.contract_id = {{contract.contract_id}}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button title="Editer le contrat" class="btn btn-success btn-s" onclick="window.location = window.location.origin + '/EzCharge/public/index.php/edit_contract/{{contract.id}}'">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button title="Voir la liste des recharges" class="btn btn-info btn-s" onclick="window.location = window.location.origin + '/EzCharge/public/index.php/contract/{{contract.id}}'">
+                                        <i class="fa fa-battery-full"></i>
+                                    </button>
+                                </td>
+                                <td>{{contract.created_at|date('d/m/Y')}}</td>
+                                <td>{{contract.start|date('d/m/Y')}}</td>
+                                <td>{{contract.end|date('d/m/Y')}}</td>
+                                <td>{{contract.plate}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+            {% endif %}
+
+            {% if hasPrepaid %}
+            <div class="row mt">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <table class="table table-striped table-advance table-hover" id="prepaid">
+                            <h4><i class="fa fa-angle-right"></i> Contrats prépayés &nbsp<button onclick="togglePrepaid(this)" type="button" class="btn btn-default"><i class="fa fa-eye-slash"></i></button></h4>
+                            <hr>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th><i class="fa fa-calendar"></i> Date de création</th>
+                                <th><i class="fa fa-battery-half"></i> Puissance restante</th>
+                                <th><i class="fa fa-id-card-o"></i> Plaque d'immatriculation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for contract in contracts if contract.type_id == 1 %}
+                            <tr>
+                                <td>
+                                    <button class="btn btn-danger btn-s"
+                                            title="Supprimer le contrat"
+                                            data-toggle="modal"
+                                            data-target="#confirmContractDelete"
+                                            onclick="document.contract_id = {{contract.contract_id}}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button title="Editer le contrat" class="btn btn-success btn-s" onclick="window.location = window.location.origin + '/EzCharge/public/index.php/edit_contract/{{contract.id}}'">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button title="Voir la liste des recharges" class="btn btn-info btn-s" onclick="window.location = window.location.origin + '/EzCharge/public/index.php/contract/{{contract.id}}'">
+                                        <i class="fa fa-battery-full"></i>
+                                    </button>
+                                </td>
+                                <td>{{contract.created_at|date('d/m/Y')}}</td>
+                                <td>{{contract.remaining}}</td>
+                                <td>{{contract.plate}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+            {% endif %}
+
+            {% if not hasPrepaid and not hasSubscription %}
+            <br>
+            <div class="col-sm-12 alert alert-warning">
+                <strong> Ce client n'a pas encore de contrats.</strong>
+            </div>
+            {% endif %}
+
+            <!-- MODAL -->
+            {% include 'modals/confirmContractDelete.html' %}
+            <!-- //MODAL -->
+
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+<script>
+    var isSubscriptionDisplayed = true;
+    var isPrepaidDisplayed = true;
+
+    // toggle subscription table visibility
+    document.toggleSubscription = function (e) {
+        if(isSubscriptionDisplayed){
+            e.querySelector("i").classList.remove('fa-eye-slash');
+            e.querySelector("i").classList.add('fa-eye');
+            e.classList.add('btn-success');
+            document.querySelector("table#subscription").style.display = "none";
+        }else{
+            e.querySelector("i").classList.remove('fa-eye');
+            e.classList.remove('btn-success');
+            e.querySelector("i").classList.add('fa-eye-slash');
+            document.querySelector("table#subscription").style.display = "table";
+        }
+
+        isSubscriptionDisplayed = !isSubscriptionDisplayed;
+    };
+
+    // toggle prepaid table visibility
+    document.togglePrepaid = function (e) {
+        if(isPrepaidDisplayed){
+            e.querySelector("i").classList.remove('fa-eye-slash');
+            e.querySelector("i").classList.add('fa-eye');
+            e.classList.add('btn-success');
+            document.querySelector("table#prepaid").style.display = "none";
+        }else{
+            e.querySelector("i").classList.remove('fa-eye');
+            e.classList.remove('btn-success');
+            e.querySelector("i").classList.add('fa-eye-slash');
+            document.querySelector("table#prepaid").style.display = "table";
+        }
+
+        isPrepaidDisplayed = !isPrepaidDisplayed;
+    };
+
+</script>
+</body>
+</html>

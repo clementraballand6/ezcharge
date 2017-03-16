@@ -1,0 +1,68 @@
+<!--header start-->
+<header class="header black-bg">
+    <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+    </div>
+    <!--logo start-->
+    <a href="{{ path_for('home') }}" class="logo"><b>EzCharge</b></a>
+    <!--logo end-->
+    <div class="nav notify-row" id="top_menu">
+        <!--  notification start -->
+        <ul class="nav top-menu">
+
+        </ul>
+        <!--  notification end -->
+    </div>
+    <div class="top-menu">
+        <ul class="nav pull-right top-menu">
+            <li><a {{ (route == 'home') ? ' data-step="3" data-intro="Et enfin sur ce bouton, tu peux te deconnecter. Navigue dans les menus, tu retrouveras des aides commes celles-ci."'}} class="logout" href="{{ path_for('logout') }}">Deconnexion</a></li>
+        </ul>
+    </div>
+</header>
+<!--header end-->
+
+<!-- **********************************************************************************************************************************************************
+MAIN SIDEBAR MENU
+*********************************************************************************************************************************************************** -->
+<!--sidebar start-->
+<aside>
+    <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion" {{ (route == 'home') ? ' data-step="2" data-intro="Ensuite par ici tu peux trouver ton menu pour naviguer sur le site, plutôt pratique on va dire !"'}} >
+
+            <p class="centered"><a href="{{ path_for('infos') }}"><img src="/EzCharge/template/assets/img/ezcharge.png"
+                                                            class="img-circle" width="60"></a></p>
+            <h5 class="centered">{{ infos['firstname'] ~ ' ' ~ infos['lastname'] }}</h5>
+
+            <br>
+            <li class="sub-menu">
+                <button {{ (route == 'home') ? ' data-step="4" data-intro="Ha aufaite ! Je te rassure, tu peux réactiver les aides en cliquant sur ce bouton."'}} class="btn btn-success" onclick="window.location = window.location.origin + '/EzCharge/public/index.php/reactivate_hints?from=' + window.location.href">Réactiver les aides</button>
+            </li>
+
+            <li class="mt">
+                <a {{ (route == 'home') ? ' class="active"' }} href="{{ path_for('home') }}">
+                    <i class="fa fa-dashboard"></i>
+
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a {{ (route == 'contracts') ? ' class="active"' }} href="{{ path_for('contracts') }}">
+                    <i class="fa fa-file-text-o"></i>
+                    <span>Contrats</span>
+                </a>
+            </li>
+
+            <li class="sub-menu">
+                <a {{ (route == 'infos') ? ' class="active"' }} href="{{ path_for('infos') }}">
+                    <i class="fa fa-user"></i>
+                    <span>Mes informations</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->

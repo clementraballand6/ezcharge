@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> Ajouter un contrat&nbsp
+                <button onclick="location.reload()" type="button" class="btn btn-info"><i class="fa fa-refresh"></i>
+                    Rafraichir
+                </button>
+            </h3>
+
+            <div class="row mt">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <h4 class="mb"><i class="fa fa-angle-right"></i> Informations du contrat</h4>
+                        <form class="form-horizontal style-form" method="get" action="{{path_for('user_save')}}">
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Nom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="lastname"
+                                           disabled
+                                           value="{{lastname}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Prenom</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="text"
+                                           name="firstname"
+                                           disabled
+                                           value="{{firstname}}"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Type de contrat</label>
+                                <div class="col-sm-10">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadios"
+                                                   onclick="showDurationInput(); document.type = 2;"
+                                                   id="subscription" value="2" checked="">
+                                            Abonnement
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadios"
+                                                   onclick="showKWHNumberInput(); document.type = 1;"
+                                                   id="prepaid" value="1" checked="">
+                                            Contrat prépayé
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">Plaque d'immatriculation</label>
+                                <div class="col-sm-2">
+                                    <input class="form-control" type="text"
+                                           name="plate"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group" id="kwh_number">
+                                <label class="col-sm-2 col-sm-2 control-label">Nombre de Kw/H</label>
+                                <div class="col-sm-2">
+                                    <input class="form-control" type="number"
+                                           name="kwh"
+                                           placeholder="">
+                                </div>
+                                <div class="col-sm-8">
+                                    <h4>Kw/H</h4>
+                                </div>
+                            </div>
+                            <div class="form-group" id="startDuration" style="display: none">
+                                <label class="col-sm-2 col-sm-2 control-label">Date de début de l'abonnement</label>
+                                <div class="col-sm-2">
+                                    <input class="form-control" type="date"
+                                           name="start"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group" id="endDuration" style="display: none">
+                                <label class="col-sm-2 col-sm-2 control-label">Date de fin de l'abonnement</label>
+                                <div class="col-sm-2">
+                                    <input class="form-control" type="date"
+                                           name="end"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <input type="hidden" name="id" value="{{id}}">
+                            <button type="button" class="btn btn-success" onclick="addNewContract()"><i
+                                    class="fa fa-plus"></i> Ajouter
+                            </button>
+                            <br>
+                            <br>
+                            {% if user_updated %}
+                            <div class="alert alert-success alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <strong> Informations client mises à jours.</strong>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+            <br>
+            <div class="alert alert-danger alert-dismissable" id="showMissingAlert" style="display: none;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <strong>Attention!</strong> Vous devez remplir tous les champs.
+            </div>
+
+            <!-- MODAL -->
+            {% include 'modals/confirmContractDelete.html' %}
+            <!-- //MODAL -->
+
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+<script>
+    // show durations inputs when subscription contract type is selected
+    document.showDurationInput = function () {
+        document.querySelector("div#kwh_number").style.display = "none";
+        document.querySelector("div#startDuration").style.display = "block";
+        document.querySelector("div#endDuration").style.display = "block";
+    };
+
+    // show kwh input when prepaid contract type is selected
+    document.showKWHNumberInput = function () {
+        document.querySelector("div#startDuration").style.display = "none";
+        document.querySelector("div#endDuration").style.display = "none";
+        document.querySelector("div#kwh_number").style.display = "block";
+    };
+
+    // send the new contract route the correct params, also check if all inputs have been completed, else show warning message
+    document.addNewContract = function () {
+        var id = document.querySelector('input[name="id"]').value;
+        var plate = document.querySelector('input[name="plate"]').value;
+        if (document.type == 2) {
+            if (document.querySelector('input[name="start"]').value === '' || document.querySelector('input[name="end"]').value === '' || plate === '') {
+                document.querySelector('#showMissingAlert').style.display = "block";
+            } else {
+                window.location = window.location.origin + '/EzCharge/public/index.php/add_contract?type=2&kwh=&plate=' + plate + '&user_id=' + id + '&start=' + document.querySelector('input[name="start"]').value + '&end=' + document.querySelector('input[name="end"]').value;
+            }
+        } else {
+            if (document.querySelector('input[name="kwh"]').value === '' || plate === '') {
+                document.querySelector('#showMissingAlert').style.display = "block";
+            } else {
+                window.location = window.location.origin + '/EzCharge/public/index.php/add_contract?type=1&start=&end=&plate=' + plate + '&user_id=' + id + '&kwh=' + document.querySelector('input[name="kwh"]').value;
+            }
+        }
+    };
+</script>
+</body>
+</html>

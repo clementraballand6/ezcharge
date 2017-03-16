@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> Editer un contrat</h3>
+
+            <div class="row-mt">
+                <div class="content-panel">
+                    <h4 class="mb"><i class="fa fa-angle-right"></i> Informations sur le client</h4>
+                    <form class="form-horizontal style-form" method="get">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Nom du client</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text"
+                                       value="{{user['lastname']}}"
+                                       placeholder="" disabled="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Prénom du client</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text"
+                                       value="{{user['firstname']}}"
+                                       placeholder="" disabled="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                &nbsp<button class="btn btn-info"><a href="{{path_for('user', { 'id': user['id'] })}}">Acceder à la fiche client</a></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- BASIC FORM ELELEMNTS -->
+            <div class="row mt">
+                <div class="form-panel">
+
+                    {% if contract['type_id'] == 2 %}
+                    <h4 class="mb"><i class="fa fa-angle-right"></i> Informations sur l'abonnement #{{contract['id']}}
+                    </h4>
+                    {% endif %}
+
+                    {% if contract['type_id'] == 1 %}
+                    <h4 class="mb"><i class="fa fa-angle-right"></i> Informations sur le contrat prépayé
+                        #{{contract['id']}}</h4>
+                    {% endif %}
+                    <form class="form-horizontal style-form" method="get" action="{{path_for('contract_save')}}">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Date de création</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text"
+                                       disabled
+                                       value="{{contract['created_at']}}"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Plaque</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text"
+                                       name="plate"
+                                       value="{{contract['plate']}}"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        <input type="hidden"
+                               name="id"
+                               value="{{contract['id']}}">
+                        {% if contract['type_id'] == 2 %}
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Date de début</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="date"
+                                       name="start"
+                                       value="{{contract['start']}}"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Date de fin</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="date"
+                                       name="end"
+                                       value="{{contract['end']}}"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if contract['type_id'] == 1 %}
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">Kw/H restants</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="number"
+                                       name="remaining"
+                                       value="{{contract['remaining']}}"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        {% endif %}
+                        <input type="hidden" name="id" value="{{contract['id']}}">
+                        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregistrer</button>
+                        <br>
+                        <br>
+                        {% if contract_updated %}
+                        <div class="alert alert-success alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <strong> Informations du contrat mises à jours.</strong>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div><!-- /row -->
+        </section>
+
+    </section>
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+</body>
+</html>

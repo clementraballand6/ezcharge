@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> Recharges {{contract_type}} <b>#{{contract_id}}</b>
+                ({{plate}}) &nbsp
+                <button onclick="location.reload()" type="button" class="btn btn-info"><i
+                        class="fa fa-refresh"></i> Rafraichir
+                </button>
+            </h3>
+
+            {% include 'admin/templates/user_info.html' %}
+
+            {% if terminals %}
+            <div class="row mt">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <table class="table table-striped table-advance table-hover" id="charge">
+                            <h4><i class="fa fa-angle-right"></i> Tableau des recharges &nbsp
+                                <button onclick="toggleChargeList(this)" type="button"
+                                        class="btn btn-success btn-default"><i class="fa fa-eye"></i></button>
+                            </h4>
+                            <hr>
+                            <thead>
+                            <tr>
+                                <th><i class="fa fa-id-card-o"></i> Nom de la station</th>
+                                <th><i class="fa fa-plug"></i> Puissance de la borne utilisée</th>
+                                <th><i class="fa fa-battery-half"></i> Kw/H rechargés</th>
+                                <th><i class="fa fa-calendar"></i> Date de la recharge</th>
+                                <th><i class="fa fa-clock-o"></i> Heure de la recharge</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for terminal in terminals %}
+                            <tr>
+                                <td>
+                                    <button type="button" data-toggle="modal" data-target="#viewStation"
+                                            onclick="changeModalSource({{terminal.station_id}})"
+                                            class="btn btn-xs btn-theme04">{{terminal.name}}
+                                    </button>
+                                </td>
+                                <td>
+                                    <span class="label label-info label-mini">{{terminal.power}}</span>
+                                </td>
+                                <td><span class="label label-warning label-mini">{{terminal.total_power}}</span></td>
+                                <td>{{terminal.date|date('d/m/Y')}}</td>
+                                <td>{{terminal.time}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+
+            <div class="row mt">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <h4><i class="fa fa-angle-right"></i> Graphique des recharges &nbsp
+                            <button onclick="toggleChart(this)" type="button" class="btn btn-default"><i
+                                    class="fa fa-eye-slash"></i></button>
+                        </h4>
+                        <hr>
+                        <div id="chart"></div>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+            {% endif %}
+            {% if not terminals %}
+            <br>
+            <div class="alert alert-danger">
+                <strong>Pas encore de données de recharge pour ce contrat.</strong>
+            </div>
+            {% endif %}
+
+        </section>
+    </section>
+
+    <!-- MODAL -->
+    {% include 'modals/viewStation.html' %}
+    <!-- //MODAL -->
+
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+<script>
+    // twig inject content into js' vars
+    var currentContract = {{contract_id}};
+    var terminals = {{terminals_chart | json_encode | raw}};
+
+    // basic js vars init
+    var currentStation = {};
+    var datatableDrawCount = 0; // needed to know if datatable draw event is init draw
+    var isChargeListDisplayed = false;
+    var isChartDisplayed = true;
+
+    /**
+     * toggle chart visibility on eye's click
+     * @param e
+     */
+    document.toggleChart = function (e) {
+        if (isChartDisplayed) {
+            e.querySelector("i").classList.remove('fa-eye-slash');
+            e.querySelector("i").classList.add('fa-eye');
+            e.classList.add('btn-success');
+            document.querySelector("div#chart").style.display = "none";
+        } else {
+            e.querySelector("i").classList.remove('fa-eye');
+            e.classList.remove('btn-success');
+            e.querySelector("i").classList.add('fa-eye-slash');
+            document.querySelector("div#chart").style.display = "table";
+        }
+
+        isChartDisplayed = !isChartDisplayed;
+    };
+
+    /**
+     * change modal infos on station's click
+     * @param station
+     */
+    document.changeModalSource = function (station) {
+        // call google api to know address of station's lat-lon
+        var req = new XMLHttpRequest();
+        req.open('GET', 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + document.stations[station]['lat'] + ',' + document.stations[station]['lon'] + '&sensor=true', true);
+        req.onreadystatechange = function (e) {
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    // insert it in the address html block
+                    document.querySelector("#stationAddress").innerHTML = JSON.parse(req.responseText).results[0].formatted_address;
+                }
+            }
+        };
+        req.send(null);
+
+        // those vars are used in the onclick event on "show on google maps" button, just re-assign on station changed
+        currentStation.lat = document.stations[station].lat;
+        currentStation.lon = document.stations[station].lon;
+
+        // set others station modal infos
+        document.querySelector("#stationName").innerHTML = document.stations[station].name;
+        document.querySelector("#stationNb3").value = document.stations[station]['power_types'][3];
+        document.querySelector("#stationNb24").value = document.stations[station]['power_types'][24];
+        document.querySelector("#stationNb50").value = document.stations[station]['power_types'][50];
+    };
+
+    // call self route 'stations' for the selected contract, get all stations of the contract
+    var req = new XMLHttpRequest();
+    req.open('GET', location.origin + '/EzCharge/public/index.php/stations/' + currentContract, true);
+    req.onreadystatechange = function (e) {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                // assign stations to var
+                document.stations = JSON.parse(req.responseText);
+            }
+        }
+    };
+    req.send(null);
+
+    // init Morris chart with terminals data
+    new Morris.Line({
+        element: 'chart',
+        data: terminals,
+        xkey: 'date',
+        ykeys: ['total_power'],
+        labels: ['Kw/H Chargés']
+    });
+
+    // init datatable on charge list
+    $("#charge").DataTable({
+        stateSave: true,
+        colReorder: true,
+        fixedHeader: true,
+        "pageLength": 20,
+        dom: 'Bfrtip',
+        columnDefs: [
+            {
+                "targets": 'no-sort',
+                "orderable": false,
+                "order": []
+            },
+            {
+                targets: 3,
+                type: "date-eu"
+            }
+        ],
+        buttons: [
+            'colvis'
+        ],
+        language: {
+            buttons: {
+                colvis: 'Filtres de colonnes'
+            },
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+        }
+    });
+
+    // hide by default the datatable once datatable finished first drawing into html page
+    // also needed to grab the datatable generated wrapper's div to correctly show/hide on the eye button
+    $("#charge").on("draw.dt", function () {
+        // exec only when datatable is drawn the first time, after, functions are registered into js page
+        if (datatableDrawCount == 0) {
+            // hide by default
+            document.querySelector("#charge_wrapper").style.display = "none";
+
+            // toggle charge list visibility
+            document.toggleChargeList = function (e) {
+                console.log(e);
+                if (isChargeListDisplayed) {
+                    e.querySelector("i").classList.remove('fa-eye-slash');
+                    e.querySelector("i").classList.add('fa-eye');
+                    e.classList.add('btn-success');
+                    document.querySelector("#charge_wrapper").style.display = "none";
+                } else {
+                    e.querySelector("i").classList.remove('fa-eye');
+                    e.classList.remove('btn-success');
+                    e.querySelector("i").classList.add('fa-eye-slash');
+                    document.querySelector("#charge_wrapper").style.display = "table";
+                }
+
+                // set to the opposite
+                isChargeListDisplayed = !isChargeListDisplayed;
+            };
+        }
+        // increase draw count to know if its first draw or not
+        datatableDrawCount++;
+    });
+
+</script>
+</body>
+</html>

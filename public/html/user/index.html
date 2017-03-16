@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'user/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'user/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper" data-step="1" data-intro="Bienvenue, {{ infos['firstname'] ~ ' ' ~ infos['lastname'] }} ! Ici tu as le 'Dashboard', c'est à dire ton tableau de bord avec quelques statistiques sur ton compte EzCharge." >
+
+            <div class="row">
+                <div class="col-lg-11 col-lg-offset-1">
+                    <div class="row mtbox">
+                        <div class="col-md-5 col-sm-5 box0" onclick="window.location = 'contracts'">
+                            <div class="box1">
+                                <i class="fa-5x fa fa-file-text-o" aria-hidden="true"></i>
+                                <h3>{{ contracts|length }}</h3>
+                            </div>
+                            <p>Vous avez {{ contracts|length }} contrats chez EzCharge.</p>
+                        </div>
+                        <div class="col-md-1 col-sm-2">
+                        </div>
+
+                        {% if closestContract %}
+                        <div class="col-md-5 col-sm-5 box0" onclick="window.location = 'contract/{{closestContract['id']}}'">
+                            <div class="box1">
+                                <i class="fa-5x fa fa-calendar" aria-hidden="true"></i>
+                                <h3>{{ closestContract['end']|date('d/m/Y') }}</h3>
+                            </div>
+                            <p>L'abonnement avec la date de fin la plus proche se termine le {{ closestContract['end']|date('d/m/Y') }}.</p>
+                        </div>
+                        {% endif %}
+
+                        {% if not closestContract and minRemaining %}
+                            {% include 'user/templates/remaining-box.html' %}
+                        {% endif %}
+                    </div><!-- /row mt -->
+                </div><!-- /row -->
+            </div><!-- /col-lg-9 END SECTION MIDDLE -->
+
+            <div class="row">
+                <div class="col-lg-11 col-lg-offset-1">
+                    <div class="row mtbox">
+                        {% if closestContract and minRemaining %}
+                            {% include 'user/templates/remaining-box.html' %}
+                        {% endif %}
+                    </div>
+                </div><!-- /row -->
+            </div><!-- /col-lg-9 END SECTION MIDDLE -->
+
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+{% include 'user/templates/footers.html' %}
+
+{% if show_hints %}
+<script>
+    introJs().start();
+</script>
+{% endif %}
+
+</body>
+</html>

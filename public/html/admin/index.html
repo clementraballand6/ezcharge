@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'admin/templates/headers.html' %}
+</head>
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    {% include 'admin/templates/menu.html' %}
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+
+            <div class="row">
+                <div class="col-lg-11 col-lg-offset-1">
+                    <div class="row mtbox">
+                        <div class="col-md-5 col-sm-5 box0">
+                            <div class="box1">
+                                <i class="fa-5x fa fa-file-text-o" aria-hidden="true"></i>
+                                <h3>{{ contracts|length }}</h3>
+                            </div>
+                            <p>Vous avez {{ contracts|length }} contrats chez EzCharge.</p>
+                        </div>
+                        <div class="col-md-1 col-sm-2">
+                        </div>
+
+                        {% if closestContract %}
+                        <div class="col-md-5 col-sm-5 box0">
+                            <div class="box1">
+                                <i class="fa-5x fa fa-calendar" aria-hidden="true"></i>
+                                <h3>{{ closestContract }}</h3>
+                            </div>
+                            <p>L'abonnement avec la date de fin la plus proche se termine le {{ closestContract }}.</p>
+                        </div>
+                        {% endif %}
+
+                        {% if not closestContract and minRemaining %}
+                            {% include 'admin/templates/remaining-box.html' %}
+                        {% endif %}
+                    </div><!-- /row mt -->
+                </div><!-- /row -->
+            </div><!-- /col-lg-9 END SECTION MIDDLE -->
+
+            <div class="row">
+                <div class="col-lg-11 col-lg-offset-1">
+                    <div class="row mtbox">
+                        {% if closestContract and minRemaining %}
+                            {% include 'admin/templates/remaining-box.html' %}
+                        {% endif %}
+                    </div>
+                </div><!-- /row -->
+            </div><!-- /col-lg-9 END SECTION MIDDLE -->
+
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+{% include 'admin/templates/footers.html' %}
+</body>
+</html>

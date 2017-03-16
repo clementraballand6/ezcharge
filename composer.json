@@ -1,0 +1,8 @@
+{
+    "require": {
+        "fzaninotto/faker": "^1.6",
+        "slim/slim": "^3.7",
+        "slim/twig-view": "^2.1",
+        "gabordemooij/redbean": "^4.3"
+    }
+}
